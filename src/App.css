@@ -4,3 +4,15 @@
     align-items: center;
     height: 100vh;
 }
+
+.links {
+    float: right;
+}
+.link {
+    margin-left: 10px;
+    color: #0BBD78;
+}
+
+.link:hover {
+    color: #077A4D;
+}

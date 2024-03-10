@@ -4,50 +4,89 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import {
-  LoginForm,
+  LoginFormPage,
   ProConfigProvider,
   ProFormCaptcha,
   ProFormCheckbox,
   ProFormText,
-  setAlpha,
 } from '@ant-design/pro-components';
-import { Tabs, message, theme } from 'antd';
+import { Divider, Space, Tabs, message, theme, ConfigProvider } from 'antd';
 import type { CSSProperties } from 'react';
 import { useState } from 'react';
+import './App.css'
 
-type LoginType = 'phone' | 'account';
+import {BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
+import Homepage from './Homepage';
 
-export default () => {
+type LoginType = 'account' | 'phone';
+
+const iconStyles: CSSProperties = {
+  color: 'rgba(0, 0, 0, 0.2)',
+  fontSize: '18px',
+  verticalAlign: 'middle',
+  cursor: 'pointer',
+};
+
+const App: React.FC = () => {
+
+  const [loginType, setLoginType] = useState<LoginType>('account');
   const { token } = theme.useToken();
-  const [loginType, setLoginType] = useState<LoginType>('phone');
 
-  const iconStyles: CSSProperties = {
-    marginInlineStart: '16px',
-    color: setAlpha(token.colorTextBase, 0.2),
-    fontSize: '24px',
-    verticalAlign: 'middle',
-    cursor: 'pointer',
-  };
+  // const navigate = useNavigate();
+  const save = async (values: any) => {
+    console.log(values);
+  }
+  // const onFinish = async (values: any) => {
+  //   await save(values);
+  //   navigate('/');
+  // }
+
 
   return (
-    <ProConfigProvider hashed={false}>
-      <div style={{ backgroundColor: token.colorBgContainer }}>
-        <LoginForm
+    <div
+      style={{
+        backgroundColor: 'rgba(50, 50, 50, 1)',
+        height: '100vh',
+      }}
+    >
+      <ConfigProvider
+        theme={{
+          components: {
+            Tabs: {
+              itemColor: 'rgba(255, 255, 255, 0.8)',
+              itemActiveColor: '#099E64',
+              itemSelectedColor: '#0BBD78',
+              itemHoverColor: '#0DE491',
+              inkBarColor: '#0BBD78'
+            },
+
+          }
+        }}
+      >
+        <LoginFormPage
+          backgroundImageUrl="https://s2.loli.net/2024/03/09/gbXerZBKy6HizEA.png"
+          logo={<img src={"https://s2.loli.net/2024/03/09/3sapWQjuSxTUBwM.png"}
+                     style={{width: '120px', height: '120px', marginLeft: '-60px', marginTop: '-20px'}}/>}
           title="Book Store"
-          subTitle="by lostgeek"
-          submitter={{
-            searchConfig: {
-              submitText: "登录",
-            }
+          containerStyle={{
+            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            backdropFilter: 'blur(4px)',
+            borderRadius: '10%',
+            boxShadow: '14px 14px 10px rgba(0, 0, 0, 0.2)',
+
           }}
+          subTitle="by lostgeek"
+          //onFinish={onFinish}
         >
+
           <Tabs
+            animated={{inkBar: true, tabPane: true}}
             centered
             activeKey={loginType}
             onChange={(activeKey) => setLoginType(activeKey as LoginType)}
           >
-            <Tabs.TabPane key={'account'} tab={'账号密码登录'} />
-            <Tabs.TabPane key={'phone'} tab={'手机号登录'} />
+            <Tabs.TabPane key={'account'} tab={'账号密码登录'}/>
+            <Tabs.TabPane key={'phone'} tab={'手机号登录'}/>
           </Tabs>
           {loginType === 'account' && (
             <>
@@ -55,9 +94,16 @@ export default () => {
                 name="username"
                 fieldProps={{
                   size: 'large',
-                  prefix: <UserOutlined className={'prefixIcon'} />,
+                  prefix: (
+                    <UserOutlined
+                      style={{
+                        color: token.colorText,
+                      }}
+                      className={'prefixIcon'}
+                    />
+                  ),
                 }}
-                placeholder={'用户名: admin or user'}
+                placeholder={'用户名'}
                 rules={[
                   {
                     required: true,
@@ -69,40 +115,16 @@ export default () => {
                 name="password"
                 fieldProps={{
                   size: 'large',
-                  prefix: <LockOutlined className={'prefixIcon'} />,
-                  strengthText:
-                    'Password should contain numbers, letters and special characters, at least 8 characters long.',
-                  statusRender: (value) => {
-                    const getStatus = () => {
-                      if (value && value.length > 12) {
-                        return 'ok';
-                      }
-                      if (value && value.length > 6) {
-                        return 'pass';
-                      }
-                      return 'poor';
-                    };
-                    const status = getStatus();
-                    if (status === 'pass') {
-                      return (
-                        <div style={{ color: token.colorWarning }}>
-                          强度：中
-                        </div>
-                      );
-                    }
-                    if (status === 'ok') {
-                      return (
-                        <div style={{ color: token.colorSuccess }}>
-                          强度：强
-                        </div>
-                      );
-                    }
-                    return (
-                      <div style={{ color: token.colorError }}>强度：弱</div>
-                    );
-                  },
+                  prefix: (
+                    <LockOutlined
+                      style={{
+                        color: token.colorText,
+                      }}
+                      className={'prefixIcon'}
+                    />
+                  ),
                 }}
-                placeholder={'密码: ant.design'}
+                placeholder={'密码'}
                 rules={[
                   {
                     required: true,
@@ -117,7 +139,14 @@ export default () => {
               <ProFormText
                 fieldProps={{
                   size: 'large',
-                  prefix: <MobileOutlined className={'prefixIcon'} />,
+                  prefix: (
+                    <MobileOutlined
+                      style={{
+                        color: token.colorText,
+                      }}
+                      className={'prefixIcon'}
+                    />
+                  ),
                 }}
                 name="mobile"
                 placeholder={'手机号'}
@@ -135,7 +164,14 @@ export default () => {
               <ProFormCaptcha
                 fieldProps={{
                   size: 'large',
-                  prefix: <LockOutlined className={'prefixIcon'} />,
+                  prefix: (
+                    <LockOutlined
+                      style={{
+                        color: token.colorText,
+                      }}
+                      className={'prefixIcon'}
+                    />
+                  ),
                 }}
                 captchaProps={{
                   size: 'large',
@@ -168,16 +204,26 @@ export default () => {
             <ProFormCheckbox noStyle name="autoLogin">
               自动登录
             </ProFormCheckbox>
-            <a
-              style={{
-                float: 'right',
-              }}
-            >
-              忘记密码
-            </a>
+            <span className={'links'}>
+              <a className={'link'}>
+                立即注册
+              </a>
+              <a className={'link'}>
+                忘记密码
+              </a>
+            </span>
+
           </div>
-        </LoginForm>
-      </div>
+        </LoginFormPage>
+      </ConfigProvider>
+    </div>
+  );
+};
+
+export default () => {
+  return (
+    <ProConfigProvider dark>
+      <App />
     </ProConfigProvider>
   );
 };
